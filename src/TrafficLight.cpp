@@ -17,7 +17,7 @@ T MessageQueue<T>::receive()
     // perform queue modification under the lock
     std::unique_lock<std::mutex> uLock(_mutex);
     // pass unique lock to condition variable
-    _condition(uLock, [] { return !_messages.empty(); });
+    _condition.wait(uLock, [this] { return !_messages.empty(); });
 
     // remove last vector element from queue
     T msg = std::move(_messages.back());
